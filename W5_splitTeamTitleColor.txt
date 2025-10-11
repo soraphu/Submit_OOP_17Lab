@@ -1,0 +1,17 @@
+//Socket server
+      <section className='w-full flex text-center justify-center'>
+        { 
+          myInfo.team === 'Red Team' ? //if
+          <div className='bg-gradient-to-r from-rose-100  via-fuchsia-100  to-sky-100 text-transparent bg-clip-text font-semibold text-7xl m-10'style={{ WebkitTextStroke: "0.5px white" }}>
+            { myInfo.team }
+          </div>
+          : myInfo.team === 'Blue Team' ? //else if
+          <div className='bg-gradient-to-r from-rose-800  via-fuchsia-800  to-sky-800 text-transparent bg-clip-text font-semibold text-7xl m-10'style={{ WebkitTextStroke: "0.5px white" }}>
+            { myInfo.team }
+          </div>
+          : //else
+          <div className='bg-gradient-to-r from-rose-500 via-fuchsia-500 to-sky-500 text-transparent bg-clip-text font-semibold text-7xl m-10'style={{ WebkitTextStroke: "0.5px white" }}>
+            { `Loading...` }
+          </div>
+        }
+      </section>

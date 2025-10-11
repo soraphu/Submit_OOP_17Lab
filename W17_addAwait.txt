@@ -1,0 +1,23 @@
+export async function GET( req, {params} ) {
+    const { maxPlayer } = params ;
+    const eachPlayerGet = 3 ;
+    const result = (maxPlayer/2) * eachPlayerGet ;
+    try {
+
+        await connectMongoDB();
+        const allProblem = await Problem.find(); 
+        if (!allProblem) {
+            return NextResponse.json({ error: "Problem not found" }, { status: 404 });
+        }//if:
+        const sumRandom = new Set() ; 
+        while( sumRandom.size < result ){ //--------------------------> จำนวนโจทย์ที่ส่งไป api
+            const ranResult = allProblem[Math.floor(Math.random() * allProblem.length)];
+            sumRandom.add( ranResult ) ;
+        }
+        return NextResponse.json( [...sumRandom], { status: 200 });
+
+    } catch (error) {
+        console.error("Error fetching Problem:", error);
+        return NextResponse.json({ error: "Failed to fetch Problem" }, { status: 500 });
+    }
+}

@@ -1,0 +1,17 @@
+const handleStartGame = () => {
+        const loadingDelay = 300 ;
+        if (socket && isHost) { socket.emit('startGame', roomId ); }
+        startBtn.current.disabled = true ;
+        startLoading.current = setInterval(() => {
+            startBtn.current.textContent = "เริ่มเกม"
+            setTimeout(() => {
+                startBtn.current.textContent = "เริ่มเกม."
+                setTimeout(() => {
+                    startBtn.current.textContent = "เริ่มเกม.."
+                    setTimeout(() => {
+                        startBtn.current.textContent = "เริ่มเกม..."
+                    }, loadingDelay );
+                }, loadingDelay );
+            }, loadingDelay );
+        }, 1200 );
+    };

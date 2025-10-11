@@ -1,0 +1,16 @@
+//Room lobby page
+        window.addEventListener( "popstate", async()=> {
+            if( socket && roomId )
+                await socket.emit( 'leaveRoom', roomId, socket.id ) ;
+        } );//ตรวจสอบการกดปุ่มกลับในบราวเซอร์
+        
+        loop();
+        
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener("resize", resize);
+            window.removeEventListener( "popstate", async()=> {
+                if( socket && roomId )
+                    await socket.emit( 'leaveRoom', roomId, socket.id ) ;
+            } );//closeEventListen.
+        };

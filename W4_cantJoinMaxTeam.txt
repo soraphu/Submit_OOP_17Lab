@@ -1,0 +1,22 @@
+//Socket server
+    socket.on('joinTeam', (roomId, teamName) => {
+        const room = rooms[roomId];
+        const userProfile = getSocketProfile(socket.id);
+        if (room) {
+            const memberIndex = room.members.findIndex(m => m.id === socket.id);
+            let teamCount=0 ;
+            rooms[roomId].members.forEach( member => {
+                if ( member.team === teamName )
+                    { teamCount++ ; }
+            } ) ;
+            if( teamCount >= (rooms[roomId].maxPlayers/2)  ) {
+                socket.emit( 'msgAlert', "ทีมเต็มแล้ว!" )
+                return ; 
+            }//if: team full.
+            if (memberIndex !== -1) {
+                room.members[memberIndex].team = teamName;
+                io.to(roomId).emit('roomMembers', room.members);
+            }//if: Approve join
+        }//if: has room.
+        io.to(roomId).emit('roomBroadcast', `[System] ${userProfile.username} joined ${teamName}.`);
+    });

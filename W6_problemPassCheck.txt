@@ -1,0 +1,41 @@
+//Socket server
+const fillCompetitionElement = async ( roomId ) => {
+    const thisRoomMax = rooms[roomId].maxPlayers ; 
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/problems/random/${thisRoomMax}`) ;
+        const availProblems = await res.json() ;
+        const prbEachPlayer = availProblems.length / (thisRoomMax/2) ;
+        let sumScore = 0, j=0, count=0 ;
+                //^variable
+        for (let i = 0; i < rooms[roomId].members.length ; i++) {
+            const userTeam = rooms[roomId].members[i].team ;
+            if( userTeam === "Red Team" ) {    
+                for (; j < count+prbEachPlayer ; j++){ 
+                    rooms[roomId].members[i].problemsHold = { ...availProblems[j], passCheck:false }
+                    rooms[roomId].members[i].problemsHold.push( availProblems[j] ) ; 
+                }//forj: fill elements to member Red Team 
+                count = j ;
+            }//if ...
+        }//fori:
+        j=0 ; count=0 ; 
+        for (let i = 0; i < rooms[roomId].members.length ; i++) {
+            const userTeam = rooms[roomId].members[i].team ;
+            if( userTeam === "Blue Team" ) {    
+                for (; j < count+prbEachPlayer ; j++){ 
+                    rooms[roomId].members[i].problemsHold = { ...availProblems[j], passCheck:false }
+                    rooms[roomId].members[i].problemsHold.push( availProblems[j] ) ; 
+                }//forj: fill elements to member Red Team
+                count = j ;
+            }//if: ...
+        }//แจกโจทย์, คิดไม่ออกใช้ algo นี้ไปก่อน
+      availProblems.forEach( problemScore => {
+        sumScore += problemScore.score ;
+      }); //sum คือ รวมคะแนนจากทุกโจทย์
+      rooms[roomId] = { ...rooms[roomId], scoreWin: sumScore } ; //เพิ่ม sumScore ไปยังห้อง
+      console.log( "Current start game room info:" ) ;
+      console.log( rooms[roomId] ) ;
+      return rooms[roomId] ;
+    } catch (error) {
+      console.error("ไม่สามารถโหลดข้อมูลโจทย์ได้:", error);
+    }//trycatch:
+}//fillComp...

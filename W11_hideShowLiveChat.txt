@@ -1,0 +1,44 @@
+//Hide show button
+    const handleHideShowLiveChat = () => {
+        const liveChat = document.getElementById('livechat') ;
+        const chatShowBtn = document.getElementById('chatShowBtn') ;
+        if( liveChat.hidden === true ){
+            liveChat.hidden = false ;
+            setTimeout(() => {
+                chatShowBtn.textContent = "HIDE" ;
+                liveChat.className = 'transition-all duration-400 absolute top-14 right-4 w-150 h-80 rounded-xl bg-gray-400 p-2 opacity-90' ;
+                chatShowBtn.className = `absolute top-3 right-4 w-20 h-10 rounded-full border-2 border-white bg-gray-600 text-white text-l ml-1 hover:bg-gray-700`
+            }, 1);
+        }//if:
+        else {
+            chatShowBtn.textContent = "CHAT" ;
+            liveChat.className = 'overflow-hidden transition-all duration-400 absolute top-14 right-4 w-0 h-0' ;
+            chatShowBtn.className = `absolute top-3 right-4 w-20 h-10 rounded-full border-2 border-white bg-amber-600 text-white text-l ml-1 hover:bg-amber-700`
+            setTimeout(() => {
+                liveChat.hidden = true ;
+            }, 400);
+        }//else:
+    };
+
+
+//return html
+    {/*--- livechat ---*/}
+    <button onClick={handleHideShowLiveChat} id='chatShowBtn'
+        className='absolute top-3 right-4 w-20 h-10 rounded-full border-2 border-white bg-amber-600 text-white text-l ml-1 hover:bg-amber-700' >
+        CHAT
+    </button>
+    <div id='livechat' hidden={true}
+        className='absolute top-14 right-4 w-0 h-0 rounded-xl bg-gray-400 p-2 opacity-90'>
+        <div id="livechat.log"
+            className='h-65 w-145 text-sm rounded-t-xl mt-1 overflow-y-scroll wrap-break-word pl-2' >
+        </div>
+        <div className='flex mt-2' /*--- form ---*/ >
+            <input id="livechat.msg" type="text" placeholder="ข้อความ" onKeyDown={handleLiveChatPressEnter}
+                className='w-124 h-7 border-white rounded-full bg-gray-500 pl-2 text-white hover:bg-gray-600 ml-1 font-extralight'
+            />
+            <button id='livechat.sendmsg' type="submit" onClick={() => handleSendMesssage()}
+                className='w-20 h-7 rounded-full border-2 border-lime-500 bg-green-700 text-white text-s ml-1 hover:bg-green-900 m-top-0'>
+                Send
+            </button>
+        </div>
+    </div>

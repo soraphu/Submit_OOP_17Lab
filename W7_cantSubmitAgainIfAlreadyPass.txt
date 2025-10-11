@@ -1,0 +1,78 @@
+//Game page
+  const [ problemsHold, setProblemsHold ] = useState([null]) ;
+  const [ myInfoIndex, setMyInfoIndex ] = useState() ;
+  const [ prbIndex, setPrbIndex ] = useState(0) ;
+  const [ currProblem, setCurrProblem] = useState({
+    _id: null,
+    title: "กำลังโหลดโจทย์...",
+    type: "-",
+    difficulty: "-",
+    description: "-",
+    score: "-",
+    input: "-",
+    output: "-",
+    testcases: []
+  });
+  const [userCode, setUserCode] = useState("");
+  const [teamScores, setTeamScores] = useState({ Red: 0, Blue: 0, Win:0 });
+
+  //Start game
+  useEffect(()=>{
+    const roomSetDefault = (currRoom) => {
+      console.log("Received game room info: ", currRoom ) ;
+      const tempMyInfoIndex = currRoom.members.findIndex( u => u.id === socket.id ) ;
+      const tempMyInfo = currRoom.members[tempMyInfoIndex] ;
+      setMyInfo( tempMyInfo ) ;
+      setMyInfoIndex( tempMyInfoIndex ) ;
+      setProblemsHold( tempMyInfo.problemsHold ) ;
+        setCurrProblem( tempMyInfo.problemsHold[0] ) ; 
+        setPrbIndex( prev => prev+1 ) ;
+        //^เช็ตข้อมูลให้หน้าเว็บของคนนี้
+        setTeamScores( prev => ({...prev, Win: currRoom.scoreWin }) ) ;
+      }//arrowFunction
+      socket.on('setStartGameDefault', (roomSetDefault) ) ;
+      return () => socket.off('setStartGameDefault', (roomSetDefault) ) ;
+  }, [] )
+
+  useEffect(() => {
+    socket.on('submissionResult', (resultData) => {
+      console.log('Received submission result:', resultData);
+      setSubmissionResult(resultData);
+    });
+    socket.on( 'updateRoomScore', handleUpdateRoom ) ;
+  }, [socket, myInfo, myInfoIndex]);
+  
+  const handleUpdateRoom = ( newUpdateData ) => {
+    setMyInfo( newUpdateData.members[myInfoIndex] ) ;
+    setProblemsHold( newUpdateData.members[myInfoIndex].problemsHold ) ;
+    setTeamScores( prev => ({...prev, Red: newUpdateData.scoreRed }) ) ;
+    setTeamScores( prev => ({...prev, Blue: newUpdateData.scoreBlue }) ) ;
+  }
+
+  const goNextProblem = () => {
+    console.log( myInfo ) ;
+    setPrbIndex( prev => {
+      if( prev == ( problemsHold.length - 1 ) ) return 0 ;
+      else return prev+1
+    } ) ;
+    setCurrProblem( problemsHold[prbIndex] );
+  };
+
+//Socket server
+        if( pass ){ //Real release: (pass)
+            const temp_Score = score ; //ใช้แบบนี้กรณีเผื่อเทสใส่ค่าอื่นๆให้
+            const i = rooms[roomId].members.findIndex( (e) => e.id === thisUser.id ) ;
+            const j = rooms[roomId].members[i].problemsHold.findIndex( (e) => e._id === problemId ) ;
+            rooms[roomId].members[i].problemsHold[j].passCheck = true ;
+            if( resultData.userInfo.team === "Red Team" )
+                rooms[roomId].scoreRed += temp_Score ; 
+            else rooms[roomId].scoreBlue += temp_Score ; 
+            //^บวกคะแนนรวมทีม
+            console.log(`[SCORE UPDATE] Room ${roomId}: ${resultData.userInfo.team} scored +${score}. New Health Offset: ${rooms[roomId].scoreRed}.`);
+            const gameUseData = {
+                gameMembers: rooms[roomId].members,
+                scoreRed: rooms[roomId].scoreRed,
+                scoreBlue: rooms[roomId].scoreBlue
+            } ; 
+            io.to( roomId ).emit( 'updateRoomScore', gameUseData ) ; //>ส่งข้อมูลเฉพาะของห้องนี้หลังอัปเดตไปยังหน้าเว็บ
+        }//^if: ถ้าผ่านจะบันทึกคะแนนลงดาต้าเบดที่พร้อมสละเรือ

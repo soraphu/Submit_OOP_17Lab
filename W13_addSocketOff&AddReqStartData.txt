@@ -1,0 +1,23 @@
+//Arena page.jsx
+useEffect(() => {
+socket.on('setStartGameDefault', roomSetDefault);
+return () => socket.off('setStartGameDefault', roomSetDefault);
+}, [socket] )
+
+useEffect(() => {
+socket.on('submissionResult', handleSubmissionResult );
+socket.on('updateRoomScore', handleUpdateRoom);
+return () => {
+    socket.off('updateRoomScore', handleUpdateRoom);
+    socket.off('submissionResult', handleSubmissionResult );
+}
+}, [socket, myInfo, myInfoIndex]);
+
+
+
+
+
+//Server.mjs
+socket.on( 'reqSetRoomData', roomId => {
+    socket.emit( 'setStartGameDefault', rooms[roomId] ) ;
+} )

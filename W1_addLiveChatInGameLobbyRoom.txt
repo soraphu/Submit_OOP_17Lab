@@ -1,0 +1,87 @@
+    socket.on('joinTeam', (roomId, userId, teamName) => {
+        const room = rooms[roomId];
+        if (room) {
+            const memberIndex = room.members.findIndex(m => m.id === userId);
+            if (memberIndex !== -1) {
+                room.members[memberIndex].team = teamName;
+                io.to(roomId).emit('roomMembers', room.members);
+            }
+        }
+        io.to( roomId ).emit( 'roomBroadcast', `[System] ${userId} joined ${teamName}.` ) ;
+    });
+
+    socket.on( 'msg', MsgObject => {
+        io.to( MsgObject.roomId ).emit( 'LogMsg', MsgObject ) ;
+    } );
+
+//Game lobby room
+    socket.on('roomInfo', handleRoomInfo);
+    socket.on('roomMembers', handleRoomMembers);
+    socket.on('gameStarted', handleGameStarted);
+    socket.on( 'LogMsg', handleLogMessage);
+    socket.on( 'roomBroadcast', handleBroadcast);
+
+    return () => {
+        socket.off('roomInfo', handleRoomInfo);
+        socket.off('roomMembers', handleRoomMembers);
+        socket.off('gameStarted', handleGameStarted);
+        socket.off( 'LogMsg', handleLogMessage);
+        socket.off( 'roomBroadcast', handleBroadcast);
+    };
+
+
+    const handleBroadcast = ( msg ) => {
+        const MsgItem = document.createElement( 'div' ) ;
+        MsgItem.textContent = msg ;
+        MsgItem.className = 'text-neutral-600' ;
+        document.getElementById( 'livechat.log' ).appendChild( MsgItem ) ;
+    };
+
+    const handleLiveChatPressEnter = (e) => {
+        if( e.key === "Enter" ) {
+            handleSendMesssage()
+        }//If: press enter to send message
+    };
+
+    const handleSendMesssage = () => {
+        const msg = document.getElementById( 'livechat.msg' ) ;
+        if( msg.value != "" ) {
+            const MsgObject = {
+                name:socket.id , //เปลี่ยน socket.id เป็นชื่อ user แทนหากมีการเก็บชื่อแล้ว
+                roomId:roomId,
+                team:Team,
+                msg:msg.value ,
+            } ;
+            msg.value = '' ;
+            socket.emit( 'msg', MsgObject ) ;
+        } else {
+            console.log( "[System]: Empty message" ) ; 
+        }//ifelse: input message empty or not
+    } ;
+
+    const handleLogMessage = ( MsgObject ) => {
+        const MsgItem = document.createElement( 'div' ) ;
+
+        if( socket.id == MsgObject.name ) {
+            MsgItem.textContent = `[You] ${MsgObject.name}: ${MsgObject.msg}` ;
+            if( MsgObject.team == "Red Team" ){
+                MsgItem.className = 'text-red-700' ;
+            } else if ( MsgObject.team == "Blue Team" ) {
+                MsgItem.className = 'text-indigo-700' ;
+            } else {
+                MsgItem.className = 'text-black' ;
+            }//ifelse: check if msgObject is my  
+        } else {
+            if( MsgObject.team == "Red Team" ){
+                MsgItem.className = 'text-red-700' ;
+                MsgItem.textContent = `[Red Team] ${MsgObject.name}: ${MsgObject.msg}` ;
+            } else if ( MsgObject.team == "Blue Team" ) {
+                MsgItem.className = 'text-indigo-700' ;
+                MsgItem.textContent = `[Blue Team] ${MsgObject.name}: ${MsgObject.msg}` ;
+            } else {
+                MsgItem.className = 'text-black' ;
+                MsgItem.textContent = `[No Team] ${MsgObject.name}: ${MsgObject.msg}` ;
+            }   
+        }//ifelse: check if msgObject is otheruser
+        document.getElementById( 'livechat.log' ).appendChild( MsgItem ) ;
+    } ;

@@ -1,0 +1,26 @@
+//Game page
+  const startTimer = () => {
+    timer.current = setInterval(() => {
+      setTime(prev => {
+        let { hours, minutes, seconds } = prev;
+        if (seconds > 0) seconds--;
+        else if (minutes > 0) { minutes--; seconds = 59; }
+        else if (hours > 0) { hours--; minutes = 59; seconds = 59; }
+        else {
+          socket.emit( 'timeUp->server', roomId ) ;
+          console.log( 'timeup emit' ) ;
+        }
+        return { hours, minutes, seconds };
+      });
+    }, 1000);
+  } ; //ระบบจับเวลา 
+
+//Socket-server
+    socket.on( 'timeUp->server', (roomId)=>{
+        const thisRoom = rooms[roomId] ;
+        let winnerTeam ;
+        if( thisRoom.scoreRed > thisRoom.scoreBlue ) winnerTeam = 'Red Team' ;
+        else if ( thisRoom.scoreRed < thisRoom.scoreBlue ) winnerTeam = 'Blue Team' ;
+        else winnerTeam = false ;
+        io.to(roomId).emit('gameWon', { winner: winnerTeam, roomData: rooms[roomId] });
+    } );

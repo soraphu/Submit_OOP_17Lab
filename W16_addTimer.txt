@@ -1,0 +1,37 @@
+// นับเวลาถอยหลัง
+const startTimer = () => {
+const timer = setInterval(() => {
+    setTime(prev => {
+    let { hours, minutes, seconds } = prev;
+    if (seconds > 0) seconds--;
+    else if (minutes > 0) { minutes--; seconds = 59; }
+    else if (hours > 0) { hours--; minutes = 59; seconds = 59; }
+    else clearInterval(timer);
+    return { hours, minutes, seconds };
+    });
+}, 1000);
+return () => clearInterval(timer);
+} ;
+//  สิ้นสุดนับเวลาถอยหลัง 
+
+
+useEffect(() => {
+window.addEventListener("beforeunload", handleBeforeReloadPage );
+socket.on('setStartGameDefault', roomSetDefault ) ;
+if( !socket ) socket.emit( 'reqSetRoomData', roomId ) ;
+return () => {
+    socket.off('setStartGameDefault', roomSetDefault ) ;
+    window.removeEventListener("beforeunload", handleBeforeReloadPage );
+}
+}, [socket] ) ;
+
+useEffect(() => {
+socket.on( 'startTimer->arena', startTimer ) ;
+socket.on('submissionResult', handleSubmissionResult );
+socket.on('updateRoomScore', handleUpdateRoom);
+return () => {
+    socket.off( 'startTimer->arena', startTimer ) ;
+    socket.off('updateRoomScore', handleUpdateRoom);
+    socket.off('submissionResult', handleSubmissionResult );
+}
+}, [socket, myInfo, myInfoIndex]);

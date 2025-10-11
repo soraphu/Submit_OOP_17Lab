@@ -1,0 +1,17 @@
+<section className='w-full flex text-center justify-center'>
+    {
+        !myInfo ? 
+        <div className='bg-gradient-to-b from-rose-800 via-fuchsia-400 to-sky-800 text-transparent bg-clip-text font-semibold text-8xl m-10'>
+            {`Loading...`}
+        </div>
+        :
+        myInfo.team === 'Red Team' ? //if
+        <div className='bg-gradient-to-b from-red-800  via-red-400  to-red-200 text-transparent bg-clip-text font-semibold text-8xl m-10'>
+            {myInfo.team}
+        </div>
+        : 
+        <div className='bg-gradient-to-b from-blue-800  via-blue-400  to-blue-200 text-transparent bg-clip-text font-semibold text-8xl m-10'>
+            {myInfo.team}
+        </div>
+    }
+</section>

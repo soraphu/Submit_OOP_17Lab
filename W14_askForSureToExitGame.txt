@@ -1,0 +1,14 @@
+const handleBeforeReloadPage = (event) => {
+    event.preventDefault() ;
+    event.returnValue = "" ; 
+} ; //ถามเพื่อความชัวว่าจะรีโหลดหน้าหรอ
+
+//Start game
+useEffect(() => {
+window.addEventListener("beforeunload", handleBeforeReloadPage );
+socket.on('setStartGameDefault', roomSetDefault ) ;
+return () => {
+    socket.off('setStartGameDefault', roomSetDefault ) ;
+    window.removeEventListener("beforeunload", handleBeforeReloadPage );
+}
+}, [socket] ) ;

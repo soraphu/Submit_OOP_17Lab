@@ -1,0 +1,12 @@
+//Socket server
+    socket.on('joinTeam', (roomId, userId, teamName) => {
+        const room = rooms[roomId];
+        if (room) {
+            const memberIndex = room.members.findIndex(m => m.id === userId);
+            if (memberIndex !== -1) {
+                room.members[memberIndex].team = teamName;
+                io.to(roomId).emit('roomMembers', room.members);
+            }
+        }
+        io.to(roomId).emit('roomBroadcast', `[System] ${getSocketProfile(socket.id).username} joined ${teamName}.`);
+    });

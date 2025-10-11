@@ -1,0 +1,30 @@
+//room_lobby
+    const handleHideShowLiveChat = () => {
+        const liveChat = document.getElementById('livechat') ;
+        const chatShowBtn = document.getElementById('chatShowBtn') ;
+        if( liveChat.hidden === true ){
+            liveChat.hidden = false ;
+            setTimeout(() => {
+                liveChat.className = 'transition-all duration-400 absolute top-14 right-4 w-150 h-80 rounded-xl bg-gray-400 p-2 opacity-90' ;
+                chatShowBtn.className = `transition-all duration-400 absolute top-3 right-4 w-150 h-10 rounded-full border-2 border-blak bg-gray-600 text-white text-l ml-1 hover:bg-gray-700`
+                setTimeout(() => {
+                    chatShowBtn.textContent = "ซ่อนกล่องข้อความ" ;
+                }, 110);
+            }, 1);
+        }//if:
+        else {
+            chatShowBtn.textContent = "ข้อความ" ;
+            liveChat.className = 'overflow-hidden transition-all duration-400 absolute top-14 right-4 w-0 h-0' ;
+            chatShowBtn.className = `transition-all duration-400 absolute top-3 right-4 w-20 h-10 rounded-full border-2 border-white bg-gray-600 text-white text-l ml-1 hover:bg-gray-700`
+            setTimeout(() => {
+                liveChat.hidden = true ;
+            }, 400);
+        }//else:
+    };
+
+//return
+    {/*--- livechat ---*/}
+    <button onClick={handleHideShowLiveChat} id='chatShowBtn'
+        className='absolute top-3 right-4 w-20 h-10 rounded-full border-2 border-white bg-gray-600 text-white text-l ml-1 hover:bg-gray-700' >
+        ข้อความ
+    </button>
